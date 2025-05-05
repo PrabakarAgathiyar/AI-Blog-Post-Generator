@@ -5,7 +5,7 @@ const fetch = require("node-fetch");
 const rateLimitMap = new Map();
 
 exports.handler = async (event) => {
-  const allowOrigin = "https://theboringrich.com";
+  const allowOrigin = "https://www.rythmworks.com";
 
   if (event.httpMethod === "OPTIONS") {
     return {
@@ -130,10 +130,8 @@ function markdownToHTML(md) {
     .replace(/^\- (.*$)/gim, "<li>$1</li>")
     .replace(/\*\*(.*?)\*\*/gim, "<strong>$1</strong>")
     .replace(/\*(.*?)\*/gim, "<em>$1</em>")
-    .replace(/
-{2,}/g, "</p><p>")
-    .replace(/
-/g, "<br>")
+    .replace(/\n{2,}/g, "</p><p>")  // ✅ Fixed
+    .replace(/\n/g, "<br>")         // ✅ Fixed
     .replace(/^<p>/, "")
     .replace(/<\/p>$/, "")
     .trim()
