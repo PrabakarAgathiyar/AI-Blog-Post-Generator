@@ -4,124 +4,61 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>AI Blog Post Generator</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #ffffff;
-      color: #000000;
-      margin: 0;
-      padding: 2rem;
-    }
-
-    #ai-blog-generator {
-      max-width: 600px;
-      margin: auto;
-    }
-
-    form {
-      background: #ffffff;
-      padding: 1rem;
-      border-radius: 12px;
-    }
-
-    input, select {
-      width: 100%;
-      padding: 12px;
-      background: #f0f0f0;
-      border: none;
-      border-radius: 8px;
-      margin-bottom: 1rem;
-      color: #000000;
-    }
-
-    button {
-      width: 100%;
-      background: #55D6F0;
-      color: #000000;
-      border: none;
-      padding: 14px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    #blog-output {
-      margin-top: 2rem;
-      display: none;
-    }
-
-    #blog-content {
-      background: #f0f0f0;
-      padding: 1rem;
-      border-radius: 10px;
-      white-space: pre-wrap;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-      font-size: 16px;
-      color: #000000;
-    }
-
-    #copy-btn {
-      background: #55D6F0;
-      color: #000000;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 6px;
-      cursor: pointer;
-      margin-top: 1rem;
-      font-weight: bold;
-    }
-
-    #limit-msg {
-      color: #666666;
-      text-align: center;
-      font-size: 0.9rem;
-      margin-top: 1rem;
-    }
-  </style>
 </head>
-<body>
-  <div id="ai-blog-generator">
+<body style="font-family: Arial, sans-serif; background: #ffffff; color: #000000; margin: 0; padding: 2rem;">
+  <div id="ai-blog-generator" style="max-width: 600px; margin: auto;">
     <h1 style="text-align:center;">AI Blog Post Generator</h1>
+
     <p style="text-align:center; font-size: 0.95rem; color: #555;">
       📝 Enter your topic, keywords, and tone. Get a full SEO-optimized article in seconds!
     </p>
 
-    <form onsubmit="generateBlog(event)">
-      <label for="topic" style="font-weight:bold;">Blog Topic:</label>
-      <input type="text" id="topic" placeholder="e.g., Benefits of SEO for small businesses" />
+    <form onsubmit="generateBlog(event)" style="padding: 1rem 0;">
+      <label for="topic" style="font-weight:bold; display:block; margin-bottom: 0.3rem;">Blog Topic:</label>
+      <input type="text" id="topic" placeholder="e.g., Benefits of SEO for small businesses"
+        style="width: 100%; padding: 12px; margin-bottom: 1.2rem; border: none; border-radius: 8px; background: #f0f0f0; color: #000;" />
 
-      <label for="keywords" style="font-weight:bold;">Target Keywords:</label>
-      <input type="text" id="keywords" placeholder="e.g., SEO, local business, Google ranking" />
+      <label for="keywords" style="font-weight:bold; display:block; margin-bottom: 0.3rem;">Target Keywords:</label>
+      <input type="text" id="keywords" placeholder="e.g., SEO, local business, Google ranking"
+        style="width: 100%; padding: 12px; margin-bottom: 1.2rem; border: none; border-radius: 8px; background: #f0f0f0; color: #000;" />
 
-      <label for="tone" style="font-weight:bold;">Tone of Voice:</label>
-      <select id="tone">
+      <label for="tone" style="font-weight:bold; display:block; margin-bottom: 0.3rem;">Tone of Voice:</label>
+      <select id="tone" style="width: 100%; padding: 12px; margin-bottom: 1.2rem; border: none; border-radius: 8px; background: #f0f0f0; color: #000;">
         <option value="informative">Informative</option>
         <option value="professional">Professional</option>
         <option value="casual">Casual</option>
         <option value="funny">Funny</option>
       </select>
 
-      <label for="length" style="font-weight:bold;">Length:</label>
-      <select id="length">
+      <label for="length" style="font-weight:bold; display:block; margin-bottom: 0.3rem;">Length:</label>
+      <select id="length" style="width: 100%; padding: 12px; margin-bottom: 1.2rem; border: none; border-radius: 8px; background: #f0f0f0; color: #000;">
         <option value="short">Short (~300 words)</option>
         <option value="medium">Medium (~600 words)</option>
         <option value="long">Long (~1000+ words)</option>
       </select>
 
-      <button type="submit">🚀 Generate Blog</button>
-      <p id="limit-msg"></p>
+      <button type="submit"
+        style="width: 100%; background: #55D6F0; color: #000000; font-weight: bold; border: none; padding: 14px; border-radius: 8px; cursor: pointer;">
+        🚀 Generate Blog
+      </button>
+
+      <!-- 💡 Daily Limit Notice (Now correctly placed below button) -->
+      <p style="text-align:center; font-size: 0.9rem; color: #666; margin-top: 1rem;">
+        💡 You can generate up to <strong>3 blog posts</strong> per day – totally free! Come back tomorrow for more.
+      </p>
+
+      <p id="limit-msg" style="text-align: center; font-size: 0.9rem; color: #666; margin-top: 1rem;"></p>
     </form>
 
-    <div id="blog-output">
+    <div id="blog-output" style="margin-top: 2rem; display: none;">
       <h2 style="text-align:center;">Generated Blog Post:</h2>
-      <div id="blog-content"></div>
-      <div style="text-align:center;">
-        <button id="copy-btn" onclick="copyBlogText()">✂️ Copy</button>
+      <div id="blog-content"
+        style="background: #f0f0f0; padding: 1rem; border-radius: 8px; white-space: pre-wrap; font-size: 1rem; color: #000000;"></div>
+      <div style="text-align: center;">
+        <button id="copy-btn" onclick="copyBlogText()"
+          style="margin-top: 1rem; background: #55D6F0; color: #000000; padding: 10px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
+          ✂️ Copy
+        </button>
       </div>
     </div>
   </div>
@@ -147,9 +84,7 @@
       const btn = document.querySelector("form button");
       btn.disabled = true;
       btn.style.opacity = 0.6;
-
-      const msg = document.getElementById("limit-msg");
-      msg.innerText = message;
+      document.getElementById("limit-msg").innerText = message;
     }
 
     window.addEventListener("DOMContentLoaded", () => {
@@ -184,7 +119,7 @@
       outputSection.style.display = "block";
 
       try {
-        const response = await fetch("https://your-site.netlify.app/.netlify/functions/generateBlogPost", {
+        const response = await fetch("https://regal-pudding-1aa2dc.netlify.app/.netlify/functions/generateBlogPost", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ topic, keywords, tone, length })
