@@ -1,4 +1,3 @@
-
 const fetch = require("node-fetch");
 
 // In-memory store for rate limits (per session; resets with cold start)
@@ -16,15 +15,12 @@ exports.handler = async (event) => {
   }
 
   const apiKey = process.env.OPENAI_API_KEY;
-
   if (!apiKey) {
     return errorResponse(500, "OPENAI_API_KEY is not set", allowOrigin);
   }
 
   // Extract user IP
   const userIP = event.headers["x-nf-client-connection-ip"] || "unknown";
-
-  // Rate limiting: max 3 per day per IP
   const usage = rateLimitMap.get(userIP) || { count: 0, lastUsed: Date.now() };
   const today = new Date().toDateString();
   const lastUsedDay = new Date(usage.lastUsed).toDateString();
@@ -40,7 +36,6 @@ exports.handler = async (event) => {
   }
 
   let topic, keywords, tone, length;
-
   try {
     const parsedBody = JSON.parse(event.body || "{}");
     topic = parsedBody.topic;
@@ -54,6 +49,8 @@ exports.handler = async (event) => {
   }
 
   const prompt = buildPrompt(topic, keywords, tone, length);
+  console.log("Prompt sent to OpenAI:", prompt);
+  console.log("User IP:", userIP);
 
   try {
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -70,13 +67,11 @@ exports.handler = async (event) => {
     });
 
     const data = await response.json();
-
     const raw = data?.choices?.[0]?.message?.content;
     if (!raw) throw new Error("No content returned by OpenAI");
 
     const blogHtml = markdownToHTML(raw);
 
-    // Save updated usage
     rateLimitMap.set(userIP, {
       count: today === lastUsedDay ? usage.count + 1 : 1,
       lastUsed: Date.now(),
@@ -88,11 +83,11 @@ exports.handler = async (event) => {
       body: JSON.stringify({ blog: blogHtml }),
     };
   } catch (error) {
-    return errorResponse(500, error.message, allowOrigin);
+    return errorResponse(500, "OpenAI API error: " + error.message, allowOrigin);
   }
 };
 
-// Utilities
+// Helpers
 
 function corsHeaders(origin) {
   return {
@@ -130,11 +125,11 @@ function markdownToHTML(md) {
     .replace(/^\- (.*$)/gim, "<li>$1</li>")
     .replace(/\*\*(.*?)\*\*/gim, "<strong>$1</strong>")
     .replace(/\*(.*?)\*/gim, "<em>$1</em>")
-    .replace(/\n{2,}/g, "</p><p>")  // ✅ Fixed
-    .replace(/\n/g, "<br>")         // ✅ Fixed
+    .replace(/\n{2,}/g, "</p><p>")
+    .replace(/\n/g, "<br>")
     .replace(/^<p>/, "")
     .replace(/<\/p>$/, "")
     .trim()
     .replace(/<\/p><p>/g, "<br><br>")
-    .replace(/<li>(.*?)<\/li>/gim, "<ul><li>$1</li></ul>");
+    .replace(/<li>(.*?)<\/li>/gim, "<li>$1</li>");
 }
